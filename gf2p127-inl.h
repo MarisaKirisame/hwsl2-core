@@ -2,9 +2,14 @@
 
 #include <stdio.h>
 #include <stdint.h>
+
+#if defined(__i386__) || defined(__x86_64__)
 #include <immintrin.h>
 #include <smmintrin.h>
 #include <wmmintrin.h>
+#else
+#include "sse2neon/sse2neon.h"
+#endif
 
 typedef __m128i gf2p127_t;
 #ifdef __AVX2__
