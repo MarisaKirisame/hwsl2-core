@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gf2p127-inl.h"
+#include <stdio.h>
 
 typedef gf2p127_t sl2_t[2][2] __attribute__((__aligned__(16)));
 typedef gf2p127_t (*psl2_t)[2] __attribute__((__aligned__(16)));
@@ -237,6 +238,69 @@ void sl2_mul(sl2_t c, sl2_t a, sl2_t b) {
   c[1][0] = gf2p127_add(m1, m3);
   c[1][1] = gf2p127_add(gf2p127_add(m0, m1), gf2p127_add(m2, m5));
 }
+
+static inline
+void sl2_mul_optimized(sl2_t c, sl2_t a, sl2_t b) {
+  gf2p127_t t0, t1, t2, t3, t4, t5;
+  t0 = gf2p127_add(a[1][0], a[1][1]);
+  t1 = gf2p127_add(a[1][1], a[0][1]);
+  t2 = gf2p127_add(a[1][1], a[0][0]);
+  t3 = gf2p127_add(b[1][1], b[0][0]);
+  t4 = gf2p127_add(b[1][0], b[1][1]);
+  t5 = gf2p127_add(b[1][1], b[0][1]);
+  
+  gf2p127_t M0, M1, M2, M3, M4, M5, M6;
+  M0 = gf2p127_mul(a[0][0], b[0][0]);
+  M1 = gf2p127_mul(a[0][1], b[1][0]);
+  M2 = gf2p127_mul(a[1][0], t3);
+  M3 = gf2p127_mul(a[1][1], b[1][1]);
+  M4 = gf2p127_mul(t0, t4);
+  M5 = gf2p127_mul(t1, t5);
+  M6 = gf2p127_mul(t2, b[0][1]);
+
+  c[0][0] = gf2p127_add(M0, M1);
+  c[0][1] = gf2p127_add(M4, M6);
+  c[1][0] = gf2p127_add(M2, M5);
+  c[1][1] = gf2p127_add(gf2p127_add(M4, M5), gf2p127_add(M1, M3));
+
+  // gf2p127_hex(new_c00, c[0][0]);
+  // gf2p127_hex(new_c01, c[0][1]);
+  // gf2p127_hex(new_c10, c[1][0]);
+  // gf2p127_hex(new_c11, c[1][1]);
+
+  // gf2p127_t m0, m1, m2, m3, m4, m5, m6;
+  // m0 = gf2p127_mul(gf2p127_add(a[0][0], a[1][1]),
+  //                  gf2p127_add(b[0][0], b[1][1]));
+  // m1 = gf2p127_mul(gf2p127_add(a[1][0], a[1][1]), b[0][0]);
+  // m2 = gf2p127_mul(a[0][0], gf2p127_add(b[0][1], b[1][1]));
+  // m3 = gf2p127_mul(a[1][1], gf2p127_add(b[1][0], b[0][0]));
+  // m4 = gf2p127_mul(gf2p127_add(a[0][0], a[0][1]), b[1][1]);
+  // m5 = gf2p127_mul(gf2p127_add(a[1][0], a[0][0]),
+  //                  gf2p127_add(b[0][0], b[0][1]));
+  // m6 = gf2p127_mul(gf2p127_add(a[0][1], a[1][1]),
+  //                  gf2p127_add(b[1][0], b[1][1]));
+
+  // gf2p127_hex(old_c00, gf2p127_add(gf2p127_add(m0, m3), gf2p127_add(m4, m6)));
+  // gf2p127_hex(old_c01, gf2p127_add(m2, m4));
+  // gf2p127_hex(old_c10, gf2p127_add(m1, m3));
+  // gf2p127_hex(old_c11, gf2p127_add(gf2p127_add(m0, m1), gf2p127_add(m2, m5)));
+
+  // if (strcmp(old_c00, new_c00) != 0)
+  //   printf("old_c00: %s, new_c00: %s\n", old_c00, new_c00);
+  // if (strcmp(old_c01, new_c01) != 0)
+  //   printf("old_c01: %s, new_c01: %s\n", old_c01, new_c01);
+  // if (strcmp(old_c10, new_c10) != 0)
+  //   printf("old_c10: %s, new_c10: %s\n", old_c10, new_c10);
+  // if (strcmp(old_c11, new_c11) != 0)
+  //   printf("old_c11: %s, new_c11: %s\n", old_c11, new_c11);
+  // printf("====================================\n");
+
+  // c[0][0] = gf2p127_add(gf2p127_add(m0, m3), gf2p127_add(m4, m6));
+  // c[0][1] = gf2p127_add(m2, m4);
+  // c[1][0] = gf2p127_add(m1, m3);
+  // c[1][1] = gf2p127_add(gf2p127_add(m0, m1), gf2p127_add(m2, m5));
+}
+
 
 static inline
 void sl2_mul_byte_left(sl2_t b, unsigned char byte, sl2_t m[256]) {
