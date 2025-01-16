@@ -19,7 +19,7 @@ static gf2p127_t gf2p127_rand() {
   };
 }
 
-static void sl2_rand(sl2_t a) {
+__attribute__((unused)) static void sl2_rand(sl2_t a) {
   a[0][0] = gf2p127_rand();
   a[0][1] = gf2p127_rand();
   a[1][0] = gf2p127_rand();

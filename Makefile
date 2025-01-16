@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -mavx2 -msse2 -msse4.1 -mpclmul -O3
+CFLAGS = -Wall -march=native -O3 -DSSE2NEON_SUPPRESS_WARNINGS -std=c99
 
 .PHONY: clean test bench
 

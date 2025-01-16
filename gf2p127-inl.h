@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #if defined(__i386__) || defined(__x86_64__)
 #include <immintrin.h>
@@ -17,14 +18,14 @@ typedef __m256i gf2p127x2_t;
 #endif
 
 static const inline
-_Bool gf2p127_valid(const gf2p127_t a) {
+bool gf2p127_valid(const gf2p127_t a) {
   return (_mm_extract_epi64(a, 1) & (UINT64_C(1) << 63)) == 0;
 }
 
 static const inline
-_Bool gf2p127_eq(const gf2p127_t a, const gf2p127_t b) {
-  _Bool lo = _mm_extract_epi64(a, 0) == _mm_extract_epi64(b, 0);
-  _Bool hi = _mm_extract_epi64(a, 1) == _mm_extract_epi64(b, 1);
+bool gf2p127_eq(const gf2p127_t a, const gf2p127_t b) {
+  bool lo = _mm_extract_epi64(a, 0) == _mm_extract_epi64(b, 0);
+  bool hi = _mm_extract_epi64(a, 1) == _mm_extract_epi64(b, 1);
   return lo && hi;
 }
 
@@ -39,7 +40,7 @@ gf2p127_t gf2p127_from_int(int a) {
 }
 
 static const inline
-gf2p127_t gf2p127_mul_bit(const gf2p127_t a, const _Bool bit) {
+gf2p127_t gf2p127_mul_bit(const gf2p127_t a, const bool bit) {
   return _mm_slli_epi64(a, !bit * 64);
 }
 
@@ -62,7 +63,7 @@ static const gf2p127_t *minmax __attribute__((__aligned__(16))) =
   (gf2p127_t *)(uint64_t [4]){0, 0, UINT64_MAX, UINT64_MAX};
 
 static const gf2p127_t *x127 __attribute__((__aligned__(16))) =
-  (gf2p127_t *)(uint32_t [4]){0, 0, 0, 1 << 31};
+  (gf2p127_t *)(uint32_t [4]){0, 0, 0, 1u << 31};
 
 static const inline
 gf2p127_t gf2p127_mul_10(const gf2p127_t a) {

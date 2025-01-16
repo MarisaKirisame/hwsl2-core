@@ -277,7 +277,7 @@ char *sl2_hex(char *buf, sl2_t a) {
   return buf;
 }
 
-static const unsigned char b64[64] =
+static const unsigned char b64[] =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 static const unsigned char unb64[256] = {
