@@ -3,6 +3,7 @@
 #include "gf2p127-inl.h"
 
 typedef gf2p127_t sl2_t[2][2] __attribute__((__aligned__(16)));
+typedef gf2p127_t (*psl2_t)[2] __attribute__((__aligned__(16)));
 
 static inline
 _Bool sl2_valid(sl2_t a) {
