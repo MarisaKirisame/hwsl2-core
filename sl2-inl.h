@@ -3,8 +3,8 @@
 #include "gf2p127-inl.h"
 #include <stdio.h>
 
-typedef gf2p127_t sl2_t[2][2] __attribute__((__aligned__(16)));
-typedef gf2p127_t (*psl2_t)[2] __attribute__((__aligned__(16)));
+typedef gf2p127_t sl2_t[2][2];
+typedef gf2p127_t (*psl2_t)[2];
 
 static inline
 _Bool sl2_valid(sl2_t a) {
@@ -204,10 +204,10 @@ void sl2_mul_buf_right(sl2_t a, unsigned char *buf, size_t n) {
 #else
 static inline
 void sl2_mul_buf_right(sl2_t a, unsigned char *buf, size_t n) {
-  gf2p127_t a00 = _mm_load_si128(&a[0][0]);
-  gf2p127_t a01 = _mm_load_si128(&a[0][1]);
-  gf2p127_t a10 = _mm_load_si128(&a[1][0]);
-  gf2p127_t a11 = _mm_load_si128(&a[1][1]);
+  gf2p127_t a00 = a[0][0];
+  gf2p127_t a01 = a[0][1];
+  gf2p127_t a10 = a[1][0];
+  gf2p127_t a11 = a[1][1];
   size_t i;
   for (i = 0; i < n; i++) {
     sl2_mul_bits_right(&a00, &a01, &a10, &a11, buf[i]);
